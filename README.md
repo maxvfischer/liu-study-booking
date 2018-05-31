@@ -4,4 +4,4 @@ The system aims to solve the problem of limited study space by enabling students
 provided by the university.
 
 ## Flow-chart of GUI
-![Flow chart](flow-chart.png)
+![Flow chart](flow-chart.pdf)

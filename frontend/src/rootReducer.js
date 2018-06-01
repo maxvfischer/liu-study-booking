@@ -1,5 +1,8 @@
 import { combineReducers } from 'redux';
 
-export default combineReducers({
+// Import reducers
+import booking from './reducers/booking';
 
+export default combineReducers({
+    booking,
 });

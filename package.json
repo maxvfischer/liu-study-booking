@@ -1,0 +1,19 @@
+{
+  "name": "liu-study-booking",
+  "version": "1.0.0",
+  "description": "LiU Study Booking is an ongoing project to create a booking system for students at Linköpings University.  The system aims to solve the problem of limited study space by enabling students to book individual seats in classrooms, provided by the university.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maxvfischer/liu-study-booking.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/maxvfischer/liu-study-booking/issues"
+  },
+  "homepage": "https://github.com/maxvfischer/liu-study-booking#readme"
+}

@@ -9,12 +9,13 @@ import {
     HIDE_CANCEL_BOOKING_DONE_MODAL,
     FETCH_CLASSROOMS_FIREBASE_START,
     FETCH_CLASSROOMS_FIREBASE_DONE,
-    CANCEL_BOOKING,
-    CHOOSE_SEAT,
+    CLOSE_BOOKING,
+    STUDENT_CHOOSE_SEAT,
     SAVE_BOOKING_FIREBASE_START,
     SAVE_BOOKING_FIREBASE_DONE,
-    HIDE_BOOKING_CONFIRMATION_MODAL,
+    CLOSE_BOOKING_CONFIRMATION_MODAL,
     REGRET_CHOSEN_SEAT,
+    SHOW_BOOKING_CONFIRMATION_MODAL
 } from '../types';
 
 
@@ -118,7 +119,7 @@ const booking = (state = bookingInitialState, action) => {
                 classRooms: action.classRooms,
             }
         }
-        case(CANCEL_BOOKING): {
+        case(CLOSE_BOOKING): {
             return {
                 ...state,
                 classRooms: null,
@@ -126,7 +127,7 @@ const booking = (state = bookingInitialState, action) => {
                 cardChecked: null
             }
         }
-        case(CHOOSE_SEAT): {
+        case(STUDENT_CHOOSE_SEAT): {
             return {
                 ...state,
                 bookingObject: action.bookingObject,
@@ -148,10 +149,15 @@ const booking = (state = bookingInitialState, action) => {
                 classRooms: null,
                 UID: null,
                 cardChecked: false,
+            }
+        }
+        case(SHOW_BOOKING_CONFIRMATION_MODAL): {
+            return {
+                ...state,
                 showBookingConfirmationModal: true,
             }
         }
-        case(HIDE_BOOKING_CONFIRMATION_MODAL): {
+        case(CLOSE_BOOKING_CONFIRMATION_MODAL): {
             return {
                 ...state,
                 showBookingConfirmationModal: false,

@@ -16,7 +16,7 @@ const store = createStore(
 ReactDOM.render(
     <BrowserRouter>
         <Provider store = { store }>
-            <Route component = { App } />
+            <Route exact path='/' component = { App } />
         </Provider>
     </BrowserRouter>,
     document.getElementById('root'));

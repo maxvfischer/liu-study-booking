@@ -21,6 +21,7 @@ import {
 
 const bookingInitialState = {
     serviceAvailable: false,
+    bookableClassrooms: [],
     classRooms: [],
 
     UID: null,

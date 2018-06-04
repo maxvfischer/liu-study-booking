@@ -38,3 +38,39 @@
   font-family: 'Arial';
   color: #000000;
 }
+
+.Chair {
+  height: 60px;
+  width: 60px;
+  position: relative;
+}
+
+.Chair img {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+}
+
+.SeatNoUp {
+  width: 100%;
+  margin-top: 5px;
+  text-align: center;
+  position: absolute;
+}
+
+.SeatNoUp span {
+  color: #FFFFFF;
+  font-size: 30px;
+}
+
+.SeatNoDown {
+  width: 100%;
+  margin-top: 17px;
+  text-align: center;
+  position: absolute;
+}
+
+.SeatNoDown span {
+  color: #FFFFFF;
+  font-size: 30px;
+}

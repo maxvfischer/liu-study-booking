@@ -15,7 +15,8 @@ import {
     SAVE_BOOKING_FIREBASE_DONE,
     CLOSE_BOOKING_CONFIRMATION_MODAL,
     REGRET_CHOSEN_SEAT,
-    SHOW_BOOKING_CONFIRMATION_MODAL
+    SHOW_BOOKING_CONFIRMATION_MODAL,
+    UPDATE_BOOKABLE_CLASSROOMS,
 } from '../types';
 
 
@@ -46,6 +47,12 @@ const bookingInitialState = {
 
 const booking = (state = bookingInitialState, action) => {
     switch(action.type) {
+        case(UPDATE_BOOKABLE_CLASSROOMS): {
+            return {
+                ...state,
+                bookableClassrooms: action.bookableClassrooms,
+            }
+        }
         case(FETCH_UID_FIREBASE_START): {
             return {
                 ...state,

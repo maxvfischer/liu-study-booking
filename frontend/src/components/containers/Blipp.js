@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import { Grid, Col, Row } from 'react-bootstrap';
+import { Grid, Row } from 'react-bootstrap';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import bookingActions from '../../actions/bookingActions';
 
 import liulogo from '../../images/Liu-logga.png';
 require('../../App.css');
@@ -9,12 +11,23 @@ const mapStateToProps = (state) => ({
     bookableClassrooms: state.bookingReducers.bookableClassrooms,
 });
 
+const mapDispatchToProps = (dispatch) => ({
+    bookingActions: bindActionCreators(bookingActions, dispatch),
+});
+
+
 class Blipp extends Component {
 
     constructor(props) {
         super(props);
 
         this.bookableClassrooms = this.bookableClassrooms.bind(this);
+    }
+
+    componentDidMount() {
+        // Listen to change in Firebase realtime database
+        // When change, update bookableClassrooms in Redux store
+        this.props.bookingActions.listenToBookableClassrooms();
     }
 
     bookableClassrooms() {
@@ -46,7 +59,6 @@ class Blipp extends Component {
             </div>
         );
     }
-
 }
 
-export default connect(mapStateToProps, null)(Blipp);
+export default connect(mapStateToProps, mapDispatchToProps)(Blipp);

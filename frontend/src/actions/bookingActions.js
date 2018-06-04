@@ -1,4 +1,3 @@
-
 import {
     FETCH_UID_FIREBASE_START,
     CANCEL_BOOKING_START,
@@ -6,9 +5,33 @@ import {
     FETCH_CLASSROOMS_FIREBASE_START,
     CLOSE_BOOKING,
     STUDENT_CHOOSE_SEAT,
+    UPDATE_BOOKABLE_CLASSROOMS,
+    REGRET_CHOSEN_SEAT,
+    SAVE_BOOKING_FIREBASE_START,
+    CLOSE_BOOKING_CONFIRMATION_MODAL,
 } from "../types";
 
-const bookingAction = {
+import { db } from '../firebase/firebase';
+
+const bookingActions = {
+    listenToBookableClassrooms() {
+        return (dispatch) => {
+            let classrooms = db.ref('classrooms');
+            classrooms.on('value', snapshot => {
+                let dataFromFirebase = snapshot.val();
+                let bookableClassrooms = [];
+
+                for (let classroom in dataFromFirebase) {
+                    if (dataFromFirebase.hasOwnProperty(classroom)) {
+                        bookableClassrooms.push(classroom);
+                    }
+
+                }
+
+                dispatch({type: UPDATE_BOOKABLE_CLASSROOMS, bookableClassrooms: bookableClassrooms});
+                })
+            }
+    },
     fetchUserFromFirebase(UID) {
         return (dispatch) => {
             dispatch({ type: FETCH_UID_FIREBASE_START, UID: UID});
@@ -70,4 +93,4 @@ const bookingAction = {
     }
 };
 
-export default bookingAction;
+export default bookingActions;

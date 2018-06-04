@@ -4,13 +4,15 @@ import './index.css';
 import Blipp from './components/containers/Blipp';
 import registerServiceWorker from './registerServiceWorker';
 
-import { createStore } from 'redux';
+import { applyMiddleware, createStore } from 'redux';
 import rootReducer from './rootReducer';
 import { Provider } from 'react-redux';
 import { BrowserRouter, Route } from 'react-router-dom';
+import thunkMiddleware from 'redux-thunk';
 
 const store = createStore(
-    rootReducer
+    rootReducer,
+    applyMiddleware(thunkMiddleware),
 );
 
 ReactDOM.render(

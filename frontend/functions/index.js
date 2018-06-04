@@ -1,63 +1,62 @@
 const admin = require('firebase-admin');
 const functions = require('firebase-functions');
+const cors = require('cors')({ origin: true  });
 
 admin.initializeApp();
 
-// Create and Deploy Your First Cloud Functions
-// https://firebase.google.com/docs/functions/write-firebase-functions
-
-exports.helloWorld = functions.https.onRequest((request, response) => {
- response.send("Hello from Firebase!");
-});
-
 // Returns status of all classrooms
-exports.getClassrooms = functions.https.onRequest((request, response) => {
-
-    // Return class room structure
-    let getClassroomStructure = function() {
-        return new Promise(function (resolve, reject) {
-            admin.database().ref('classrooms').once('value', snapshotClassrooms => {
-                resolve(snapshotClassrooms.val());
+exports.getClassrooms = functions.https.onRequest((req, res) => {
+    cors(req, res, () => {
+        // Return class room structure
+        let getClassroomStructure = function() {
+            return new Promise(function (resolve, reject) {
+                admin.database().ref('classrooms').once('value', snapshotClassrooms => {
+                    resolve(snapshotClassrooms.val());
+                });
             });
-        });
-    };
+        };
 
-    // Return classroomStatus
-    let getClassroomStatus = function (classroomStructure) {
-        return new Promise(function (resolve, reject) {
+        // Return classroomStatus
+        let getClassroomStatus = function (classroomStructure) {
+            return new Promise(function (resolve, reject) {
 
-            // Fetch booked seats
-            admin.database().ref('bookedSeats').once('value', snapshotBookedSeats => {
-                const bookedSeats = snapshotBookedSeats.val();
+                // Fetch booked seats
+                admin.database().ref('bookedSeats').once('value', snapshotBookedSeats => {
+                    const bookedSeats = snapshotBookedSeats.val();
 
-                for (let classroom in bookedSeats) { // Loop over each classroom with booked seats
-                    for (let student in bookedSeats[classroom]) { // Loop over each student who has booked a seat
-                        const room = classroom;
-                        const col = bookedSeats[classroom][student]['col'];
-                        const row = bookedSeats[classroom][student]['row'];
+                    for (let classroom in bookedSeats) { // Loop over each classroom with booked seats
+                        if (bookedSeats.hasOwnProperty(classroom)) {
+                            for (let student in bookedSeats[classroom]) { // Loop over each student who has booked a seat
+                                if (bookedSeats[classroom].hasOwnProperty(student)) {
+                                    const room = classroom;
+                                    const col = bookedSeats[classroom][student]['col'];
+                                    const row = bookedSeats[classroom][student]['row'];
 
-                        classroomStructure[room]['seats'][row][col] = 2; // Set value 2 to indicate occupied seat
+                                    classroomStructure[room]['seats'][row][col] = 2; // Set value 2 to indicate occupied seat
+                                }
+                            }
+                        }
                     }
-                }
 
-                resolve(classroomStructure);
+                    resolve(classroomStructure);
+                })
+
+            });
+        };
+
+        getClassroomStructure()
+            .then(classroomStructure => {
+                return(getClassroomStatus(classroomStructure));
             })
-
-        });
-    };
-
-    getClassroomStructure()
-        .then(classroomStructure => {
-            return(getClassroomStatus(classroomStructure));
-        })
-        .catch(error => {
-            return(error);
-        })
-        .then(classroomStatus => {
-            response.send(classroomStatus);
-            return(classroomStatus);
-        })
-        .catch(error => {
-            return(error);
-        });
+            .catch(error => {
+                return(error);
+            })
+            .then(classroomStatus => {
+                res.send({ data: classroomStatus });
+                return(classroomStatus);
+            })
+            .catch(error => {
+                return(error);
+            });
+    });
 });

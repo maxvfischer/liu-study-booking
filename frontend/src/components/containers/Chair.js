@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 
-import redChairUp from '../../images/red-chair-up.png';
-import redChairDown from '../../images/red-chair-down.png';
-import greenChairUp from '../../images/green-chair-up.png';
-import greenChairDown from '../../images/green-chair-down.png';
+import redChair from '../../images/red-chair.png';
+import greenChair from '../../images/green-chair.png';
 
 class Chair extends Component {
 
@@ -24,13 +22,13 @@ class Chair extends Component {
 
     renderSeat() {
         if (this.state.color === 'red' && this.state.direction === 'up') {
-            return (<img src={ redChairUp } alt='Red chair up' />);
+            return (<img src={ redChair } alt='Red chair up' />);
         } else if (this.state.color === 'red' && this.state.direction === 'down') {
-            return (<img src={ redChairDown } alt='Red chair down' />);
+            return (<img style={{transform: 'rotate(180deg)'}} src={ redChair } alt='Red chair down' />);
         } else if (this.state.color === 'green' && this.state.direction === 'up') {
-            return (<img src={ greenChairUp } alt='Green chair up' />);
+            return (<img src={ greenChair } alt='Green chair up' />);
         } else if (this.state.color === 'green' && this.state.direction === 'down') {
-            return (<img src={ greenChairDown } alt='Green chair down' />);
+            return (<img style={{transform: 'rotate(180deg)'}} src={ greenChair } alt='Green chair down' />);
         }
     }
 

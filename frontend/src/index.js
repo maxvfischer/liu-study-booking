@@ -2,12 +2,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import Blipp from './components/containers/Blipp';
+import Booking from './components/containers/Booking';
 import registerServiceWorker from './registerServiceWorker';
 
 import { applyMiddleware, createStore } from 'redux';
 import rootReducer from './rootReducer';
 import { Provider } from 'react-redux';
-import { BrowserRouter, Route } from 'react-router-dom';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import thunkMiddleware from 'redux-thunk';
 
 const store = createStore(
@@ -18,7 +19,10 @@ const store = createStore(
 ReactDOM.render(
     <BrowserRouter>
         <Provider store = { store }>
-            <Route exact path='/' component = { Blipp } />
+            <Switch>
+                <Route exact path='/' component = { Blipp } />
+                <Route path='/booking' component = { Booking } />
+            </Switch>
         </Provider>
     </BrowserRouter>,
     document.getElementById('root'));

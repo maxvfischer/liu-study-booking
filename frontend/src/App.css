@@ -39,6 +39,11 @@
   color: #000000;
 }
 
+.Blipp img {
+  margin-top: 40px;
+  margin-left: 40px;
+}
+
 .Chair {
   height: 60px;
   width: 60px;
@@ -73,4 +78,39 @@
 .SeatNoDown span {
   color: #FFFFFF;
   font-size: 30px;
+}
+
+.HeaderBooking {
+  height: 100px;
+  background-color: #f2f2f2;
+}
+
+.ClassroomTitle {
+  height: 100%;
+  text-align: center;
+  font-size: 40px;
+  font-family: Arial;
+  position: relative;
+}
+
+.HeaderBookingColRight {
+  height: 100%;
+  text-align: right;
+  position: relative;
+}
+
+.HeaderBookingCancelBooking {
+  font-size: 20px;
+  font-family: Arial;
+  cursor: pointer;
+}
+
+.HeaderBookingCancelBooking:hover {
+  text-decoration: underline;
+}
+
+.HeaderBookingLiuLogo {
+  height: 70%;
+  margin-top: 15px;
+  margin-left: 15px;
 }

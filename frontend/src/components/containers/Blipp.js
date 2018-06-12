@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Grid, Row } from 'react-bootstrap';
+import { Grid, Col, Row } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import bookingActions from '../../actions/bookingActions';
@@ -8,7 +8,7 @@ import liulogo from '../../images/Liu-logga.png';
 require('../../App.css');
 
 const mapStateToProps = (state) => ({
-    bookableClassrooms: state.bookingReducers.bookableClassrooms,
+    classroomNames: state.bookingReducers.classroomNames,
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -33,9 +33,11 @@ class Blipp extends Component {
     bookableClassrooms() {
         let bookableClassrooms = [];
 
-        this.props.bookableClassrooms.forEach((classroom) => {
-            bookableClassrooms.push(<p style={{ margin: '0px' }} key={ classroom }> { classroom }</p>)
-        });
+        for (let i = 0; i < this.props.classroomNames.length; i++) {
+            bookableClassrooms.push(<p style={{ margin: '0px' }} key={ this.props.classroomNames[i] }>
+                { this.props.classroomNames[i] }
+                </p>)
+        }
 
         return(bookableClassrooms);
     }
@@ -43,9 +45,11 @@ class Blipp extends Component {
     render() {
         return (
             <div className={'Blipp'}>
-                <Grid>
+                <Grid fluid>
                     <Row>
-                        <img style={{marginTop: '50px', marginLeft: '50px'}} src={liulogo} alt='Liu logo' />
+                        <Col sm={12}>
+                            <img src={liulogo} alt='Liu logo' />
+                        </Col>
                     </Row>
                     <Row style={{ textAlign: 'center' }}>
                         <p style={{ fontSize: '40px', marginBottom: '0px' }}>Singelplatsbokning</p>
@@ -53,7 +57,9 @@ class Blipp extends Component {
                         {this.bookableClassrooms()}
                     </Row>
                     <Row style={{ textAlign: 'center' }}>
-                        <p style={{ fontSize: '40px', marginTop: '150px' }}>Blippa ditt Liu-kort</p>
+                        <p onClick={() => this.props.history.push('/booking')} style={{ fontSize: '40px', marginTop: '150px' }}>
+                            Blippa ditt Liu-kort
+                        </p>
                     </Row>
                 </Grid>
             </div>

@@ -20,9 +20,6 @@ class HeaderBooking extends Component {
 
     constructor(props) {
         super(props);
-        console.log(this.props.classroomNames);
-        console.log(this.props.selectedClassroomName);
-        console.log(this.props.classroomNames.indexOf(this.props.selectedClassroomName));
 
         this.renderChangeClassroom = this.renderChangeClassroom.bind(this);
         this.onClickLeft = this.onClickLeft.bind(this);

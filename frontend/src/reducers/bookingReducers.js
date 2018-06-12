@@ -50,7 +50,6 @@ const bookingInitialState = {
 const booking = (state = bookingInitialState, action) => {
     switch(action.type) {
         case(UPDATE_SELECTED_CLASSROOM): {
-            console.log(action.selectedClassroomName);
             return {
                 ...state,
                 selectedClassroomName: action.selectedClassroomName,

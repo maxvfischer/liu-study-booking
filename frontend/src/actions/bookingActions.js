@@ -28,10 +28,14 @@ const bookingActions = {
                     }
                 }
 
-                dispatch({ type: UPDATE_BOOKABLE_CLASSROOMS,
-                    classrooms: bookableClassrooms,
-                    classroomNames: classroomNames });
-
+                fetch('https://us-central1-liu-study-booking.cloudfunctions.net/getClassrooms')
+                    .then((response) => response.json())
+                    .then((json) => {
+                        dispatch({ type: UPDATE_BOOKABLE_CLASSROOMS,
+                            classrooms: json["data"],
+                            classroomNames: classroomNames });
+                    });
+                
                 dispatch({ type: UPDATE_SELECTED_CLASSROOM, selectedClassroomName: classroomNames[0]})
             })
         }

@@ -17,7 +17,7 @@ import {
     REGRET_CHOSEN_SEAT,
     SHOW_BOOKING_CONFIRMATION_MODAL,
     UPDATE_BOOKABLE_CLASSROOMS,
-    UPDATE_SELECTED_CLASSROOM,
+    UPDATE_SELECTED_CLASSROOM, UPDATE_BOOKABLE_CLASSROOM_NAMES,
 } from '../types';
 
 
@@ -59,6 +59,11 @@ const booking = (state = bookingInitialState, action) => {
             return {
                 ...state,
                 classrooms: action.classrooms,
+            }
+        }
+        case(UPDATE_BOOKABLE_CLASSROOM_NAMES): {
+            return {
+                ...state,
                 classroomNames: action.classroomNames,
             }
         }

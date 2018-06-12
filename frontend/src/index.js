@@ -5,6 +5,7 @@ import Blipp from './components/containers/Blipp';
 import Booking from './components/containers/Booking';
 import registerServiceWorker from './registerServiceWorker';
 
+import { composeWithDevTools } from 'redux-devtools-extension';
 import { applyMiddleware, createStore } from 'redux';
 import rootReducer from './rootReducer';
 import { Provider } from 'react-redux';
@@ -13,7 +14,7 @@ import thunkMiddleware from 'redux-thunk';
 
 const store = createStore(
     rootReducer,
-    applyMiddleware(thunkMiddleware),
+    composeWithDevTools(applyMiddleware(thunkMiddleware))
 );
 
 ReactDOM.render(

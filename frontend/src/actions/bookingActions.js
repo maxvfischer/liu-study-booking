@@ -9,6 +9,7 @@ import {
     REGRET_CHOSEN_SEAT,
     SAVE_BOOKING_FIREBASE_START,
     CLOSE_BOOKING_CONFIRMATION_MODAL,
+    UPDATE_SELECTED_CLASSROOM,
 } from "../types";
 
 import { db } from '../firebase/firebase';
@@ -18,19 +19,27 @@ const bookingActions = {
         return (dispatch) => {
             let classrooms = db.ref('classrooms');
             classrooms.on('value', snapshot => {
-                let dataFromFirebase = snapshot.val();
-                let bookableClassrooms = [];
+                let bookableClassrooms = snapshot.val();
+                let classroomNames = [];
 
-                for (let classroom in dataFromFirebase) {
-                    if (dataFromFirebase.hasOwnProperty(classroom)) {
-                        bookableClassrooms.push(classroom);
+                for (let classroom in bookableClassrooms) {
+                    if (bookableClassrooms.hasOwnProperty(classroom)) {
+                        classroomNames.push(classroom);
                     }
-
                 }
 
-                dispatch({type: UPDATE_BOOKABLE_CLASSROOMS, bookableClassrooms: bookableClassrooms});
-                })
-            }
+                dispatch({ type: UPDATE_BOOKABLE_CLASSROOMS,
+                    classrooms: bookableClassrooms,
+                    classroomNames: classroomNames });
+
+                dispatch({ type: UPDATE_SELECTED_CLASSROOM, selectedClassroomName: classroomNames[0]})
+            })
+        }
+    },
+    updateSelectedClassroom(selectedClassroomName) {
+        return (dispatch) => {
+            dispatch({ type: UPDATE_SELECTED_CLASSROOM, selectedClassroomName: selectedClassroomName });
+        }
     },
     fetchUserFromFirebase(UID) {
         return (dispatch) => {

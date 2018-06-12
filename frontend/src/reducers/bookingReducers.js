@@ -17,13 +17,15 @@ import {
     REGRET_CHOSEN_SEAT,
     SHOW_BOOKING_CONFIRMATION_MODAL,
     UPDATE_BOOKABLE_CLASSROOMS,
+    UPDATE_SELECTED_CLASSROOM,
 } from '../types';
 
 
 const bookingInitialState = {
     serviceAvailable: false,
-    bookableClassrooms: [],
-    classRooms: [],
+    classrooms: [],
+    selectedClassroomName: null,
+    classroomNames: [],
 
     UID: null,
     isFetchingIfActiveStudent: false,
@@ -47,10 +49,18 @@ const bookingInitialState = {
 
 const booking = (state = bookingInitialState, action) => {
     switch(action.type) {
+        case(UPDATE_SELECTED_CLASSROOM): {
+            console.log(action.selectedClassroomName);
+            return {
+                ...state,
+                selectedClassroomName: action.selectedClassroomName,
+            }
+        }
         case(UPDATE_BOOKABLE_CLASSROOMS): {
             return {
                 ...state,
-                bookableClassrooms: action.bookableClassrooms,
+                classrooms: action.classrooms,
+                classroomNames: action.classroomNames,
             }
         }
         case(FETCH_UID_FIREBASE_START): {
@@ -124,13 +134,14 @@ const booking = (state = bookingInitialState, action) => {
             return {
                 ...state,
                 isFetchingClassRoom: false,
-                classRooms: action.classRooms,
+                classrooms: action.classrooms,
             }
         }
         case(CLOSE_BOOKING): {
+            console.log("reducer");
             return {
                 ...state,
-                classRooms: null,
+                classrooms: null,
                 UID: null,
                 cardChecked: null
             }
@@ -154,7 +165,7 @@ const booking = (state = bookingInitialState, action) => {
                 showBookingDecisionModal: false,
                 isSavingBooking: false,
                 bookingObject: null,
-                classRooms: null,
+                classrooms: null,
                 UID: null,
                 cardChecked: false,
             }

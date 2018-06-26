@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import { array, string, bool, object } from 'prop-types';
+import { array, string, bool, object, number } from 'prop-types';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import blue from '@material-ui/core/colors/blue';
 import { Grid, Col, Row } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -15,7 +17,10 @@ const mapStateToProps = (state) => ({
     studentIsActive: state.bookingReducers.studentIsActive,
     cardChecked: state.bookingReducers.cardChecked,
     showConfirmationModal: state.bookingReducers.showConfirmationModal,
-    confirmationModalMessage: state.bookingReducers.confirmationModalMessage
+    confirmationModalMessage: state.bookingReducers.confirmationModalMessage,
+    confirmationModalTime: state.bookingReducers.confirmationModalTime,
+    isFetchingIfActiveStudent: state.bookingReducers.isFetchingIfActiveStudent,
+    confirmationModalType: state.bookingReducers.confirmationModalType
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -38,6 +43,13 @@ class Blipp extends Component {
         this.onSubmit = this.onSubmit.bind(this);
         this.onChange = this.onChange.bind(this);
         this.handleRequestClose = this.handleRequestClose.bind(this);
+        this.renderBlippFetch = this.renderBlippFetch.bind(this);
+    }
+
+    componentWillReceiveProps(newProps) {
+        if (newProps.cardChecked && !(newProps.studentIsActive)) {
+            this.props.history.push('/booking');
+        }
     }
 
     componentDidMount() {
@@ -45,12 +57,6 @@ class Blipp extends Component {
         // When change, update bookableClassrooms in Redux store
         this.props.bookingActions.listenToBookableClassrooms();
         this.props.bookingActions.listenToSettings();
-    }
-
-    componentWillReceiveProps(newProps) {
-        if (newProps.cardChecked && !(newProps.studentIsActive)) {
-            this.props.history.push('/booking');
-        }
     }
 
     bookableClassrooms() {
@@ -69,7 +75,10 @@ class Blipp extends Component {
     }
 
     onBlipp(UID) {
-        this.props.bookingActions.fetchUserFromFirebase(UID);
+        this.props.bookingActions.fetchUserFromFirebase(
+            this.props.confirmationModalTime,
+            UID
+        );
     }
 
     onSubmit(e) {
@@ -88,6 +97,33 @@ class Blipp extends Component {
         this.setState({
             open: false
         });
+    }
+
+    renderBlippFetch() {
+        if (!this.props.isFetchingIfActiveStudent) {
+            return (
+                <Row style={{ textAlign: 'center' }}>
+                    <p style={{ fontSize: '40px', marginTop: '150px' }}>
+                        Blippa ditt Liu-kort
+                    </p>
+                    <form onSubmit={ this.onSubmit }>
+                        <input
+                            type={'text'}
+                            value={ this.state.value }
+                            onChange={ this.onChange } />
+                    </form>
+                </Row>
+            );
+        } else {
+            return (
+                <Row style={{ textAlign: 'center' }}>
+                    <CircularProgress
+                        size={70}
+                        style={{ color: blue[500], marginTop: '120px' }}
+                        thickness={4} />
+                </Row>
+            );
+        }
     }
 
     render(){
@@ -115,17 +151,7 @@ class Blipp extends Component {
                         </p>
                         {this.bookableClassrooms()}
                     </Row>
-                    <Row style={{ textAlign: 'center' }}>
-                        <p style={{ fontSize: '40px', marginTop: '150px' }}>
-                            Blippa ditt Liu-kort
-                        </p>
-                        <form onSubmit={ this.onSubmit }>
-                            <input
-                                type={'text'}
-                                value={ this.state.value }
-                                onChange={ this.onChange } />
-                        </form>
-                    </Row>
+                    {this.renderBlippFetch()}
                 </Grid>
             </div>
         );
@@ -139,7 +165,10 @@ Blipp.propTypes = {
     showConfirmationModal: bool.isRequired,
     confirmationModalMessage: string.isRequired,
     bookingActions: object.isRequired,
-    history: object
+    history: object,
+    confirmationModalTime: number.isRequired,
+    isFetchingIfActiveStudent: bool.isRequired,
+    confirmationModalType: string
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Blipp);

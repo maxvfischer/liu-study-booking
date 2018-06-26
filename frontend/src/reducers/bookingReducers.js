@@ -1,6 +1,7 @@
 import {
     FETCH_UID_FIREBASE_START,
     FETCH_UID_FIREBASE_DONE,
+    FETCH_UID_FIREBASE_FAILED,
     SHOW_CANCEL_BOOKING_MODAL,
     HIDE_CANCEL_BOOKING_MODAL,
     CANCEL_BOOKING_START,
@@ -48,9 +49,11 @@ const bookingInitialState = {
     showBookingDecisionModal: false,
     showConfirmationModal: false,
     confirmationModalMessage: '',
+    confirmationModalType: '',
 
     bookingInterval: 0,
-    idleTime: 0
+    idleTime: 0,
+    confirmationModalTime: 0
 };
 
 const booking = (state = bookingInitialState, action) => {
@@ -88,6 +91,16 @@ const booking = (state = bookingInitialState, action) => {
                 cardChecked: true,
                 studentIsActive: action.studentIsActive,
                 studentBookedSeat: action.studentBookedSeat
+            };
+        }
+        case (FETCH_UID_FIREBASE_FAILED): {
+            return {
+                ...state,
+                UID: null,
+                isFetchingIfActiveStudent: false,
+                cardChecked: false,
+                studentIsActive: false,
+                studentBookedSeat: null
             };
         }
         case (SHOW_CANCEL_BOOKING_MODAL): {
@@ -197,14 +210,14 @@ const booking = (state = bookingInitialState, action) => {
             return {
                 ...state,
                 showConfirmationModal: true,
-                confirmationModalMessage: action.message
+                confirmationModalMessage: action.message,
+                confirmationModalType: action.confirmationModalType
             };
         }
         case (CLOSE_CONFIRMATION_MODAL): {
             return {
                 ...state,
                 showConfirmationModal: false,
-                confirmationModalMessage: ''
             };
         }
         case (REGRET_CHOSEN_SEAT): {
@@ -218,7 +231,8 @@ const booking = (state = bookingInitialState, action) => {
             return {
                 ...state,
                 bookingInterval: action.bookingInterval,
-                idleTime: action.idleTime
+                idleTime: action.idleTime,
+                confirmationModalTime: action.confirmationModalTime
             };
         }
         default:

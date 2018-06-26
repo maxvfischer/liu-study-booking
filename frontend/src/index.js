@@ -21,8 +21,8 @@ ReactDOM.render(
     <BrowserRouter>
         <Provider store = { store }>
             <Switch>
-                <Route exact path='/' component = { Blipp } />
-                <Route path='/booking' component = { RequireBlipp } />
+                <Route exact path='/' component={ Blipp } />
+                <Route path='/booking' component={ RequireBlipp } />
             </Switch>
         </Provider>
     </BrowserRouter>,

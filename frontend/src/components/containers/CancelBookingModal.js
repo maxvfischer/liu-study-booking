@@ -10,7 +10,8 @@ const mapStateToProps = (state) => ({
     showCancelBookingModal: state.bookingReducers.showCancelBookingModal,
     studentBookedSeat: state.bookingReducers.studentBookedSeat,
     bookingInterval: state.bookingReducers.bookingInterval,
-    UID: state.bookingReducers.UID
+    UID: state.bookingReducers.UID,
+    confirmationModalTime: state.bookingReducers.confirmationModalTime
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -34,7 +35,8 @@ class CancelBookingModal extends Component {
     handleCancelBooking() {
         this.props.bookingActions.cancelBooking(
             this.props.studentBookedSeat,
-            this.props.UID
+            this.props.UID,
+            this.props.confirmationModalTime
         );
     }
 
@@ -105,7 +107,8 @@ CancelBookingModal.propTypes = {
     studentBookedSeat: object,
     bookingInterval: number.isRequired,
     UID: string,
-    bookingActions: object.isRequired
+    bookingActions: object.isRequired,
+    confirmationModalTime: number.isRequired
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CancelBookingModal);

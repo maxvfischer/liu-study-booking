@@ -1,5 +1,6 @@
 import {
     FETCH_UID_FIREBASE_START,
+    FETCH_UID_FIREBASE_FAILED,
     SAVE_BOOKING_FIREBASE_DONE,
     CANCEL_BOOKING_START,
     HIDE_CANCEL_BOOKING_MODAL,
@@ -55,10 +56,13 @@ const bookingActions = {
                     snapshot.val()['bookingInterval'], 0);
                 let idleTime = parseInt(
                     snapshot.val()['idleTime'], 0);
+                let confirmationModalTime = parseInt(
+                    snapshot.val()['confirmationModalTime'], 0);
                 dispatch({
                     type: CHANGE_SETTINGS,
                     bookingInterval: bookingInterval,
-                    idleTime: idleTime
+                    idleTime: idleTime,
+                    confirmationModalTime: confirmationModalTime
                 });
             });
         };
@@ -71,8 +75,22 @@ const bookingActions = {
             });
         };
     },
-    fetchUserFromFirebase(UID) {
+    fetchUserFromFirebase(confirmationModalTime, UID) {
+        function fetchTimeout(ms, promise){
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    reject(new Error('timeout'));
+                }, ms);
+                promise.then(resolve, reject);
+            });
+        }
+
         return (dispatch) => {
+            dispatch({
+                type: FETCH_UID_FIREBASE_START,
+                UID: UID
+            });
+
             const fetchRemoveOldBookingsUrl =
                 'https://us-central1-liu-study-booking'
                 + '.cloudfunctions.net/removeOldBookings';
@@ -81,51 +99,72 @@ const bookingActions = {
                 + '.cloudfunctions.net/getClassrooms';
 
             fetch(fetchRemoveOldBookingsUrl)
-                .then(() => {
-                    fetch(fetchGetClassroomsUrl)
-                        .then((response) => response.json())
-                        .then((json) => {
-                            dispatch({
-                                type: UPDATE_BOOKABLE_CLASSROOMS,
-                                classrooms: json['data']
-                            });
-                            dispatch({
-                                type: FETCH_UID_FIREBASE_START,
-                                UID: UID
-                            });
+                .then((responseRemOldBook) => {
+                    if (responseRemOldBook.status === 200) {
 
-                            // Check if student has booking in index list
-                            db.ref('students')
-                                .orderByChild('uid')
-                                .equalTo(UID)
-                                .once('value', snapshot => {
-                                let studentBookingData = snapshot.val();
+                        // Fetch timeout if Firebase fetch takes to long
+                        fetchTimeout(3000, fetch(fetchGetClassroomsUrl))
+                            .then((response) => response.json())
+                            .then((json) => {
+                                dispatch({
+                                    type: UPDATE_BOOKABLE_CLASSROOMS,
+                                    classrooms: json['data']
+                                });
 
-                                // If student exist in index list database,
-                                // find student information
-                                if (studentBookingData) {
-                                    studentBookingData =
-                                        studentBookingData[UID];
-                                    dispatch({
-                                        type: FETCH_UID_FIREBASE_DONE,
-                                        studentIsActive: true,
-                                        studentBookedSeat: studentBookingData,
-                                        UID: UID
-                                    });
+                                // Check if student has booking in index list
+                                db.ref('students')
+                                    .orderByChild('uid')
+                                    .equalTo(UID)
+                                    .once('value', snapshot => {
+                                        let studentBookingData = snapshot.val();
 
-                                    dispatch({
-                                        type: SHOW_CANCEL_BOOKING_MODAL
+                                        // If student exist in index list database,
+                                        // find student information
+                                        if (studentBookingData) {
+                                            studentBookingData =
+                                                studentBookingData[UID];
+                                            dispatch({
+                                                type: FETCH_UID_FIREBASE_DONE,
+                                                studentIsActive: true,
+                                                studentBookedSeat: studentBookingData,
+                                                UID: UID
+                                            });
+
+                                            dispatch({
+                                                type: SHOW_CANCEL_BOOKING_MODAL
+                                            });
+                                        } else {
+                                            dispatch({
+                                                type: FETCH_UID_FIREBASE_DONE,
+                                                studentIsActive: false,
+                                                studentBookedSeat: null,
+                                                UID: UID
+                                            });
+                                        }
                                     });
-                                } else {
+                            })
+                            .catch(() => {
+                                const message = 'Det gick inte att hämta ' +
+                                    'klassrummen, vänligen försök igen!';
+                                const type = 'error';
+
+                                dispatch({
+                                    type: FETCH_UID_FIREBASE_FAILED
+                                });
+
+                                dispatch({
+                                    type: SHOW_CONFIRMATION_MODAL,
+                                    message: message,
+                                    confirmationModalType: type
+                                });
+
+                                setTimeout(() => {
                                     dispatch({
-                                        type: FETCH_UID_FIREBASE_DONE,
-                                        studentIsActive: false,
-                                        studentBookedSeat: null,
-                                        UID: UID
+                                        type: CLOSE_CONFIRMATION_MODAL
                                     });
-                                }
+                                }, confirmationModalTime);
                             });
-                        });
+                    }
                 });
         };
     },
@@ -136,7 +175,7 @@ const bookingActions = {
             });
         };
     },
-    cancelBooking(studentBookedSeat, UID) {
+    cancelBooking(studentBookedSeat, UID, confirmationModalTime) {
         return (dispatch) => {
             dispatch({
                 type: CANCEL_BOOKING_START
@@ -155,18 +194,19 @@ const bookingActions = {
             });
 
             const message = 'Din plats är avbokad!';
+            const type = 'success';
 
             dispatch({
                 type: SHOW_CONFIRMATION_MODAL,
-                message: message
+                message: message,
+                confirmationModalType: type
             });
 
-            const timeoutLength = 3000;
             setTimeout(() => {
                 dispatch({
                     type: CLOSE_CONFIRMATION_MODAL
                 });
-            }, timeoutLength);
+            }, confirmationModalTime);
 
         };
     },
@@ -209,7 +249,7 @@ const bookingActions = {
             });
         };
     },
-    studentBookSeat(bookingObject) {
+    studentBookSeat(bookingObject, confirmationModalTime) {
         return (dispatch) => {
             dispatch({
                 type: SAVE_BOOKING_FIREBASE_START
@@ -246,18 +286,19 @@ const bookingActions = {
             });
 
             const message = 'Din plats är bokad!';
+            const type = 'success';
 
             dispatch({
                 type: SHOW_CONFIRMATION_MODAL,
-                message: message
+                message: message,
+                confirmationModalType: type
             });
 
-            const timeoutLength = 3000;
             setTimeout(() => {
                 dispatch({
                     type: CLOSE_CONFIRMATION_MODAL
                 });
-            }, timeoutLength);
+            }, confirmationModalTime);
         };
     },
     closeBookingConfirmationModal() {

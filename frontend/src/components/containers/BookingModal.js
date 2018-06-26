@@ -10,7 +10,8 @@ const mapStateToProps = (state) => ({
     bookingObject: state.bookingReducers.bookingObject,
     UID: state.bookingReducers.UID,
     showBookingDecisionModal: state.bookingReducers.showBookingDecisionModal,
-    bookingInterval: state.bookingReducers.bookingInterval
+    bookingInterval: state.bookingReducers.bookingInterval,
+    confirmationModalTime: state.bookingReducers.confirmationModalTime
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -37,7 +38,10 @@ class BookingModal extends Component {
         bookingObject['startTime'] = moment().valueOf();
         bookingObject['UID'] = this.props.UID;
 
-        this.props.bookingActions.studentBookSeat(bookingObject);
+        this.props.bookingActions.studentBookSeat(
+            bookingObject,
+            this.props.confirmationModalTime
+        );
         this.props.history.push('/');
     }
 
@@ -100,7 +104,8 @@ BookingModal.propTypes = {
     showBookingDecisionModal: bool.isRequired,
     bookingInterval: number.isRequired,
     bookingActions: object.isRequired,
-    history: object.isRequired
+    history: object.isRequired,
+    confirmationModalTime:number.isRequired
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(BookingModal);

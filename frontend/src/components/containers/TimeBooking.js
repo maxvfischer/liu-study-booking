@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-
-var moment = require('moment');
+import moment from 'moment';
 
 class TimeBooking extends Component {
 
@@ -9,30 +8,35 @@ class TimeBooking extends Component {
 
         this.state = {
             currentTime: null,
-            intervalId: null,
-        }
+            intervalId: 0
+        };
     }
 
     componentDidMount() {
+        const clockInterval = 1000;
         let intervalId = setInterval(() => {
             this.setState({
-                currentTime: moment().format('HH:mm'),
-            })
-        }, 1000);
+                currentTime: moment().format('HH:mm')
+            });
+        }, clockInterval);
 
         this.setState({
-            intervalId: intervalId,
-        })
+            intervalId: intervalId
+        });
     }
 
     componentWillUnmount() {
         clearInterval(this.state.intervalId);
     }
 
-    render() {
-        return(
-            <span style={{fontSize: '20px', fontFamily: 'Arial'}}>{ this.state.currentTime }</span>
+    render(){
+        return (
+            <span
+                style={{fontSize: '20px', fontFamily: 'Arial'}}>
+                { this.state.currentTime }
+            </span>
         );
     }
 }
+
 export default TimeBooking;

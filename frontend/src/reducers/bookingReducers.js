@@ -13,13 +13,16 @@ import {
     STUDENT_CHOOSE_SEAT,
     SAVE_BOOKING_FIREBASE_START,
     SAVE_BOOKING_FIREBASE_DONE,
-    CLOSE_BOOKING_CONFIRMATION_MODAL,
+    CLOSE_CONFIRMATION_MODAL,
     REGRET_CHOSEN_SEAT,
-    SHOW_BOOKING_CONFIRMATION_MODAL,
+    SHOW_CONFIRMATION_MODAL,
     UPDATE_BOOKABLE_CLASSROOMS,
-    UPDATE_SELECTED_CLASSROOM, UPDATE_BOOKABLE_CLASSROOM_NAMES,
+    UPDATE_SELECTED_CLASSROOM,
+    UPDATE_BOOKABLE_CLASSROOM_NAMES,
+    SHOW_BOOKING_MODAL,
+    HIDE_BOOKING_MODAL,
+    CHANGE_SETTINGS
 } from '../types';
-
 
 const bookingInitialState = {
     serviceAvailable: false,
@@ -43,69 +46,72 @@ const bookingInitialState = {
 
     isSavingBooking: false,
     showBookingDecisionModal: false,
-    showBookingConfirmationModal: false
+    showConfirmationModal: false,
+    confirmationModalMessage: '',
 
+    bookingInterval: 0
 };
 
 const booking = (state = bookingInitialState, action) => {
-    switch(action.type) {
-        case(UPDATE_SELECTED_CLASSROOM): {
+    switch (action.type) {
+        case (UPDATE_SELECTED_CLASSROOM): {
             return {
                 ...state,
-                selectedClassroomName: action.selectedClassroomName,
-            }
+                selectedClassroomName: action.selectedClassroomName
+            };
         }
-        case(UPDATE_BOOKABLE_CLASSROOMS): {
+        case (UPDATE_BOOKABLE_CLASSROOMS): {
             return {
                 ...state,
-                classrooms: action.classrooms,
-            }
+                classrooms: action.classrooms
+            };
         }
-        case(UPDATE_BOOKABLE_CLASSROOM_NAMES): {
+        case (UPDATE_BOOKABLE_CLASSROOM_NAMES): {
             return {
                 ...state,
-                classroomNames: action.classroomNames,
-            }
+                classroomNames: action.classroomNames
+            };
         }
-        case(FETCH_UID_FIREBASE_START): {
+        case (FETCH_UID_FIREBASE_START): {
             return {
                 ...state,
                 UID: action.UID,
-                isFetchingIfActiveStudent: true,
-            }
+                isFetchingIfActiveStudent: true
+            };
         }
-        case(FETCH_UID_FIREBASE_DONE): {
+        case (FETCH_UID_FIREBASE_DONE): {
             return {
                 ...state,
+                UID: action.UID,
                 isFetchingIfActiveStudent: false,
                 cardChecked: true,
                 studentIsActive: action.studentIsActive,
-                studentBookedSeat: action.studentBookedSeat,
-            }
+                studentBookedSeat: action.studentBookedSeat
+            };
         }
-        case(SHOW_CANCEL_BOOKING_MODAL): {
+        case (SHOW_CANCEL_BOOKING_MODAL): {
             return {
                 ...state,
-                showCancelBookingModal: true,
-            }
+                showCancelBookingModal: true
+            };
         }
-        case(HIDE_CANCEL_BOOKING_MODAL): {
+        case (HIDE_CANCEL_BOOKING_MODAL): {
             return {
                 ...state,
                 showCancelBookingModal: false,
                 UID: null,
                 cardChecked: false,
                 studentIsActive: false,
-                studentBookedSeat: null,
-            }
+                studentBookedSeat: null
+            };
         }
-        case(CANCEL_BOOKING_START): {
+        case (CANCEL_BOOKING_START): {
             return {
                 ...state,
                 isCancellingBooking: true
-            }
+            };
         }
-        case(CANCEL_BOOKING_DONE): {
+        case (CANCEL_BOOKING_DONE): {
             return {
                 ...state,
                 isCancellingBooking: false,
@@ -113,85 +119,105 @@ const booking = (state = bookingInitialState, action) => {
                 UID: null,
                 cardChecked: false,
                 studentIsActive: false,
-                studentBookedSeat: null,
-            }
+                studentBookedSeat: null
+            };
         }
-        case(SHOW_CANCEL_BOOKING_DONE_MODAL): {
+        case (SHOW_CANCEL_BOOKING_DONE_MODAL): {
             return {
                 ...state,
-                showCancelBookingDoneModal: true,
-            }
+                showCancelBookingDoneModal: true
+            };
         }
-        case(HIDE_CANCEL_BOOKING_DONE_MODAL): {
+        case (HIDE_CANCEL_BOOKING_DONE_MODAL): {
             return {
                 ...state,
-                showCancelBookingDoneModal: false,
-            }
+                showCancelBookingDoneModal: false
+            };
         }
-        case(FETCH_CLASSROOMS_FIREBASE_START): {
+        case (FETCH_CLASSROOMS_FIREBASE_START): {
             return {
                 ...state,
-                isFetchingClassRoom: true,
-            }
+                isFetchingClassRoom: true
+            };
         }
-        case(FETCH_CLASSROOMS_FIREBASE_DONE): {
+        case (FETCH_CLASSROOMS_FIREBASE_DONE): {
             return {
                 ...state,
                 isFetchingClassRoom: false,
-                classrooms: action.classrooms,
-            }
+                classrooms: action.classrooms
+            };
         }
-        case(CLOSE_BOOKING): {
-            console.log("reducer");
+        case (CLOSE_BOOKING): {
             return {
                 ...state,
-                classrooms: null,
                 UID: null,
-                cardChecked: null
-            }
+                cardChecked: false,
+                studentIsActive: false,
+                bookingObject: null,
+                showBookingDecisionModal: false
+            };
         }
-        case(STUDENT_CHOOSE_SEAT): {
+        case (STUDENT_CHOOSE_SEAT): {
             return {
                 ...state,
-                bookingObject: action.bookingObject,
-                showBookingDecisionModal: true,
-            }
+                bookingObject: action.bookingObject
+            };
         }
-        case(SAVE_BOOKING_FIREBASE_START): {
+        case (SHOW_BOOKING_MODAL): {
             return {
                 ...state,
-                isSavingBooking: true,
-            }
+                showBookingDecisionModal: true
+            };
         }
-        case(SAVE_BOOKING_FIREBASE_DONE): {
+        case (HIDE_BOOKING_MODAL): {
+            return {
+                ...state,
+                showBookingDecisionModal: false,
+                bookingObject: null
+            };
+        }
+        case (SAVE_BOOKING_FIREBASE_START): {
+            return {
+                ...state,
+                isSavingBooking: true
+            };
+        }
+        case (SAVE_BOOKING_FIREBASE_DONE): {
             return {
                 ...state,
                 showBookingDecisionModal: false,
                 isSavingBooking: false,
                 bookingObject: null,
-                classrooms: null,
                 UID: null,
-                cardChecked: false,
-            }
+                cardChecked: false
+            };
         }
-        case(SHOW_BOOKING_CONFIRMATION_MODAL): {
+        case (SHOW_CONFIRMATION_MODAL): {
             return {
                 ...state,
-                showBookingConfirmationModal: true,
-            }
+                showConfirmationModal: true,
+                confirmationModalMessage: action.message
+            };
         }
-        case(CLOSE_BOOKING_CONFIRMATION_MODAL): {
+        case (CLOSE_CONFIRMATION_MODAL): {
             return {
                 ...state,
-                showBookingConfirmationModal: false,
-            }
+                showConfirmationModal: false,
+                confirmationModalMessage: ''
+            };
         }
-        case(REGRET_CHOSEN_SEAT): {
+        case (REGRET_CHOSEN_SEAT): {
             return {
                 ...state,
                 bookingObject: null,
-                showBookingDecisionModal: false,
-            }
+                showBookingDecisionModal: false
+            };
+        }
+        case (CHANGE_SETTINGS): {
+            return {
+                ...state,
+                bookingInterval: action.bookingInterval
+            };
         }
         default:
             return state;

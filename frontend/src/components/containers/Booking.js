@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { object, bool } from 'prop-types';
+import { object, number, bool } from 'prop-types';
 import { Col, Row } from 'react-bootstrap';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -11,7 +11,8 @@ import Classroom from './Classroom';
 import BookingModal from './BookingModal';
 
 const mapStateToProps = (state) => ({
-   cardChecked: state.bookingReducers.cardChecked
+    cardChecked: state.bookingReducers.cardChecked,
+    idleTime: state.bookingReducers.idleTime
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -38,7 +39,7 @@ class Booking extends Component {
                 ref="bookingIdleTimer"
                 element={document}
                 idleAction={() => { this.onIdle(); }}
-                timeout={20000}>
+                timeout={ this.props.idleTime }>
                 <BookingModal history={ this.props.history } />
                 <Col>
                     <Row style={{
@@ -64,6 +65,7 @@ class Booking extends Component {
 
 Booking.propTypes = {
     cardChecked: bool.isRequired,
+    idleTime: number.isRequired,
     history: object.isRequired,
     bookingActions: object.isRequired
 };

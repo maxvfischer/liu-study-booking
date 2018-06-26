@@ -49,7 +49,8 @@ const bookingInitialState = {
     showConfirmationModal: false,
     confirmationModalMessage: '',
 
-    bookingInterval: 0
+    bookingInterval: 0,
+    idleTime: 0
 };
 
 const booking = (state = bookingInitialState, action) => {
@@ -216,7 +217,8 @@ const booking = (state = bookingInitialState, action) => {
         case (CHANGE_SETTINGS): {
             return {
                 ...state,
-                bookingInterval: action.bookingInterval
+                bookingInterval: action.bookingInterval,
+                idleTime: action.idleTime
             };
         }
         default:

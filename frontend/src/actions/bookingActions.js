@@ -53,9 +53,12 @@ const bookingActions = {
             settings.on('value', snapshot => {
                 let bookingInterval = parseInt(
                     snapshot.val()['bookingInterval'], 0);
+                let idleTime = parseInt(
+                    snapshot.val()['idleTime'], 0);
                 dispatch({
                     type: CHANGE_SETTINGS,
-                    bookingInterval: bookingInterval
+                    bookingInterval: bookingInterval,
+                    idleTime: idleTime
                 });
             });
         };

@@ -22,11 +22,12 @@ import {
     UPDATE_BOOKABLE_CLASSROOM_NAMES,
     SHOW_BOOKING_MODAL,
     HIDE_BOOKING_MODAL,
-    CHANGE_SETTINGS
+    CHANGE_SETTINGS,
+    SET_SERVICE_AVAILABILITY
 } from '../types';
 
 const bookingInitialState = {
-    serviceAvailable: false,
+    serviceAvailable: true,
     classrooms: [],
     selectedClassroomName: null,
     classroomNames: [],
@@ -53,7 +54,8 @@ const bookingInitialState = {
 
     bookingInterval: 0,
     idleTime: 0,
-    confirmationModalTime: 0
+    confirmationModalTime: 0,
+    fetchTimeOut: 0
 };
 
 const booking = (state = bookingInitialState, action) => {
@@ -232,7 +234,14 @@ const booking = (state = bookingInitialState, action) => {
                 ...state,
                 bookingInterval: action.bookingInterval,
                 idleTime: action.idleTime,
-                confirmationModalTime: action.confirmationModalTime
+                confirmationModalTime: action.confirmationModalTime,
+                fetchTimeOut: action.fetchTimeOut
+            };
+        }
+        case (SET_SERVICE_AVAILABILITY): {
+            return {
+                ...state,
+                serviceAvailable: action.serviceAvailable
             };
         }
         default:

@@ -20,7 +20,9 @@ const mapStateToProps = (state) => ({
     confirmationModalMessage: state.bookingReducers.confirmationModalMessage,
     confirmationModalTime: state.bookingReducers.confirmationModalTime,
     isFetchingIfActiveStudent: state.bookingReducers.isFetchingIfActiveStudent,
-    confirmationModalType: state.bookingReducers.confirmationModalType
+    confirmationModalType: state.bookingReducers.confirmationModalType,
+    serviceAvailable: state.bookingReducers.serviceAvailable,
+    fetchTimeOut: state.bookingReducers.fetchTimeOut
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -77,6 +79,7 @@ class Blipp extends Component {
     onBlipp(UID) {
         this.props.bookingActions.fetchUserFromFirebase(
             this.props.confirmationModalTime,
+            this.props.fetchTimeOut,
             UID
         );
     }
@@ -100,7 +103,17 @@ class Blipp extends Component {
     }
 
     renderBlippFetch() {
-        if (!this.props.isFetchingIfActiveStudent) {
+        if (!this.props.serviceAvailable) {
+            return (
+                <Row style={{ textAlign: 'center' }}>
+                    <p style={{ fontSize: '40px',
+                        marginTop: '150px',
+                        color: 'red'}}>
+                        Inga bokningsbara klassrum
+                    </p>
+                </Row>
+            );
+        } else if (!this.props.isFetchingIfActiveStudent) {
             return (
                 <Row style={{ textAlign: 'center' }}>
                     <p style={{ fontSize: '40px', marginTop: '150px' }}>
@@ -168,7 +181,9 @@ Blipp.propTypes = {
     history: object,
     confirmationModalTime: number.isRequired,
     isFetchingIfActiveStudent: bool.isRequired,
-    confirmationModalType: string
+    confirmationModalType: string,
+    serviceAvailable: bool.isRequired,
+    fetchTimeOut: number.isRequired
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Blipp);

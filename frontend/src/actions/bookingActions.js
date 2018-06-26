@@ -19,7 +19,8 @@ import {
     CHANGE_SETTINGS,
     CANCEL_BOOKING_DONE,
     SHOW_CONFIRMATION_MODAL,
-    CLOSE_CONFIRMATION_MODAL
+    CLOSE_CONFIRMATION_MODAL,
+    SET_SERVICE_AVAILABILITY
 } from '../types';
 
 import { db } from '../firebase/firebase';
@@ -45,6 +46,18 @@ const bookingActions = {
                     type: UPDATE_SELECTED_CLASSROOM,
                     selectedClassroomName: classroomNames[firstClassroomIndex]
                 });
+
+                if (!bookableClassrooms) {
+                    dispatch({
+                        type: SET_SERVICE_AVAILABILITY,
+                        serviceAvailable: false
+                    });
+                } else {
+                    dispatch({
+                        type: SET_SERVICE_AVAILABILITY,
+                        serviceAvailable: true
+                    });
+                }
             });
         };
     },
@@ -58,11 +71,14 @@ const bookingActions = {
                     snapshot.val()['idleTime'], 0);
                 let confirmationModalTime = parseInt(
                     snapshot.val()['confirmationModalTime'], 0);
+                let fetchTimeOut = parseInt(
+                    snapshot.val()['fetchTimeOut'], 0);
                 dispatch({
                     type: CHANGE_SETTINGS,
                     bookingInterval: bookingInterval,
                     idleTime: idleTime,
-                    confirmationModalTime: confirmationModalTime
+                    confirmationModalTime: confirmationModalTime,
+                    fetchTimeOut: fetchTimeOut
                 });
             });
         };
@@ -75,7 +91,7 @@ const bookingActions = {
             });
         };
     },
-    fetchUserFromFirebase(confirmationModalTime, UID) {
+    fetchUserFromFirebase(confirmationModalTime, fetchTimeOut, UID) {
         function fetchTimeout(ms, promise){
             return new Promise((resolve, reject) => {
                 setTimeout(() => {
@@ -97,13 +113,13 @@ const bookingActions = {
             const fetchGetClassroomsUrl =
                 'https://us-central1-liu-study-booking'
                 + '.cloudfunctions.net/getClassrooms';
+            const httpAcceptStatus = 200;
 
             fetch(fetchRemoveOldBookingsUrl)
                 .then((responseRemOldBook) => {
-                    if (responseRemOldBook.status === 200) {
-
+                    if (responseRemOldBook.status === httpAcceptStatus) {
                         // Fetch timeout if Firebase fetch takes to long
-                        fetchTimeout(3000, fetch(fetchGetClassroomsUrl))
+                        fetchTimeout(fetchTimeOut, fetch(fetchGetClassroomsUrl))
                             .then((response) => response.json())
                             .then((json) => {
                                 dispatch({

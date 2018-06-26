@@ -21,6 +21,11 @@ class ConfirmationActionModal extends Component {
             (this.props.confirmationModalType === 'success')
                 ? green[colorStrength]
                 : red[colorStrength];
+        const icon =
+            (this.props.confirmationModalType === 'success')
+                ? 'check_circle'
+                : 'error';
+
 
         return (
             <Snackbar
@@ -36,7 +41,7 @@ class ConfirmationActionModal extends Component {
                             alignItems: 'center',
                             fontSize: '15px'}}>
                                 <Icon style={{marginRight: '20px'}}>
-                                    check_circle
+                                    { icon }
                                 </Icon>
                             { this.props.confirmationModalMessage }
                             </span>

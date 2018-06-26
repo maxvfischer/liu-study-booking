@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import bookingActions from '../../actions/bookingActions';
 import CancelBookingModal from './CancelBookingModal';
+import ConfirmationActionModal from './ConfirmationActionModal';
 
 import liulogo from '../../images/Liu-logga.png';
 require('../../App.css');
@@ -93,6 +94,7 @@ class Blipp extends Component {
         return (
             <div className={'Blipp'}>
                 <CancelBookingModal />
+                <ConfirmationActionModal />
                 <Grid fluid>
                     <Row>
                         <Col sm={12}>

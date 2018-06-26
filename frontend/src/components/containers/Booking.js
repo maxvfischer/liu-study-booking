@@ -27,12 +27,6 @@ class Booking extends Component {
         this.onIdle = this.onIdle.bind(this);
     }
 
-    componentWillReceiveProps(newProps) {
-        if (!(newProps.cardChecked)) {
-            this.props.history.push('/');
-        }
-    }
-
     onIdle() {
         this.props.bookingActions.regretBooking();
         this.props.history.push('/');
@@ -45,7 +39,7 @@ class Booking extends Component {
                 element={document}
                 idleAction={() => { this.onIdle(); }}
                 timeout={20000}>
-                <BookingModal />
+                <BookingModal history={ this.props.history } />
                 <Col>
                     <Row style={{
                         margin: '0px',

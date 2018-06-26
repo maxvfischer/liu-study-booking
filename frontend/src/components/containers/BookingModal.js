@@ -38,6 +38,7 @@ class BookingModal extends Component {
         bookingObject['UID'] = this.props.UID;
 
         this.props.bookingActions.studentBookSeat(bookingObject);
+        this.props.history.push('/');
     }
 
     handleClose() {
@@ -98,7 +99,8 @@ BookingModal.propTypes = {
     UID: string,
     showBookingDecisionModal: bool.isRequired,
     bookingInterval: number.isRequired,
-    bookingActions: object.isRequired
+    bookingActions: object.isRequired,
+    history: object.isRequired
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(BookingModal);

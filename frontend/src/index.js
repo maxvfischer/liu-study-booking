@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import Blipp from './components/containers/Blipp';
-import Booking from './components/containers/Booking';
+import RequireBlipp from './components/containers/RequireBlipp';
 import registerServiceWorker from './registerServiceWorker';
 
 import { composeWithDevTools } from 'redux-devtools-extension';
@@ -22,7 +22,7 @@ ReactDOM.render(
         <Provider store = { store }>
             <Switch>
                 <Route exact path='/' component = { Blipp } />
-                <Route path='/booking' component = { Booking } />
+                <Route path='/booking' component = { RequireBlipp } />
             </Switch>
         </Provider>
     </BrowserRouter>,

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { array, string, bool, object, number } from 'prop-types';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { Detector } from 'react-detect-offline';
 import blue from '@material-ui/core/colors/blue';
 import { Grid, Col, Row } from 'react-bootstrap';
 import { connect } from 'react-redux';
@@ -102,8 +103,18 @@ class Blipp extends Component {
         });
     }
 
-    renderBlippFetch() {
-        if (!this.props.serviceAvailable) {
+    renderBlippFetch(online) {
+        if (!online) {
+            return (
+                <Row style={{ textAlign: 'center' }}>
+                    <p style={{ fontSize: '40px',
+                        marginTop: '150px',
+                        color: 'red'}}>
+                        Ingen internetanslutning
+                    </p>
+                </Row>
+            );
+        } else if (!this.props.serviceAvailable) {
             return (
                 <Row style={{ textAlign: 'center' }}>
                     <p style={{ fontSize: '40px',
@@ -164,7 +175,14 @@ class Blipp extends Component {
                         </p>
                         {this.bookableClassrooms()}
                     </Row>
-                    {this.renderBlippFetch()}
+
+                    <Detector
+                        render={({ online }) => (
+                            <div>
+                                {this.renderBlippFetch(online)}
+                            </div>
+                        )}
+                    />
                 </Grid>
             </div>
         );

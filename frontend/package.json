@@ -9,6 +9,7 @@
     "prop-types": "^15.6.2",
     "react": "^16.4.1",
     "react-bootstrap": "^0.32.1",
+    "react-detect-offline": "^2.1.1",
     "react-dom": "^16.4.0",
     "react-idle-timer": "^3.0.0",
     "react-redux": "^5.0.7",

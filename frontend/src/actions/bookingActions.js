@@ -107,80 +107,71 @@ const bookingActions = {
                 UID: UID
             });
 
-            const fetchRemoveOldBookingsUrl =
-                'https://us-central1-liu-study-booking'
-                + '.cloudfunctions.net/removeOldBookings';
             const fetchGetClassroomsUrl =
                 'https://us-central1-liu-study-booking'
                 + '.cloudfunctions.net/getClassrooms';
-            const httpAcceptStatus = 200;
 
-            fetch(fetchRemoveOldBookingsUrl)
-                .then((responseRemOldBook) => {
-                    if (responseRemOldBook.status === httpAcceptStatus) {
-                        // Fetch timeout if Firebase fetch takes to long
-                        fetchTimeout(fetchTimeOut, fetch(fetchGetClassroomsUrl))
-                            .then((response) => response.json())
-                            .then((json) => {
+            // Fetch timeout if Firebase fetch takes to long
+            fetchTimeout(fetchTimeOut, fetch(fetchGetClassroomsUrl))
+                .then((response) => response.json())
+                .then((json) => {
+                    dispatch({
+                        type: UPDATE_BOOKABLE_CLASSROOMS,
+                        classrooms: json['data']
+                    });
+
+                    // Check if student has booking in index list
+                    db.ref('students')
+                        .orderByChild('uid')
+                        .equalTo(UID)
+                        .once('value', snapshot => {
+                            let studentBookingData = snapshot.val();
+
+                            // If student exist in index list database,
+                            // find student information
+                            if (studentBookingData) {
+                                studentBookingData =
+                                    studentBookingData[UID];
                                 dispatch({
-                                    type: UPDATE_BOOKABLE_CLASSROOMS,
-                                    classrooms: json['data']
-                                });
-
-                                // Check if student has booking in index list
-                                db.ref('students')
-                                    .orderByChild('uid')
-                                    .equalTo(UID)
-                                    .once('value', snapshot => {
-                                        let studentBookingData = snapshot.val();
-
-                                        // If student exist in index list database,
-                                        // find student information
-                                        if (studentBookingData) {
-                                            studentBookingData =
-                                                studentBookingData[UID];
-                                            dispatch({
-                                                type: FETCH_UID_FIREBASE_DONE,
-                                                studentIsActive: true,
-                                                studentBookedSeat: studentBookingData,
-                                                UID: UID
-                                            });
-
-                                            dispatch({
-                                                type: SHOW_CANCEL_BOOKING_MODAL
-                                            });
-                                        } else {
-                                            dispatch({
-                                                type: FETCH_UID_FIREBASE_DONE,
-                                                studentIsActive: false,
-                                                studentBookedSeat: null,
-                                                UID: UID
-                                            });
-                                        }
-                                    });
-                            })
-                            .catch(() => {
-                                const message = 'Det gick inte att hämta ' +
-                                    'klassrummen, vänligen försök igen!';
-                                const type = 'error';
-
-                                dispatch({
-                                    type: FETCH_UID_FIREBASE_FAILED
+                                    type: FETCH_UID_FIREBASE_DONE,
+                                    studentIsActive: true,
+                                    studentBookedSeat: studentBookingData,
+                                    UID: UID
                                 });
 
                                 dispatch({
-                                    type: SHOW_CONFIRMATION_MODAL,
-                                    message: message,
-                                    confirmationModalType: type
+                                    type: SHOW_CANCEL_BOOKING_MODAL
                                 });
+                            } else {
+                                dispatch({
+                                    type: FETCH_UID_FIREBASE_DONE,
+                                    studentIsActive: false,
+                                    studentBookedSeat: null,
+                                    UID: UID
+                                });
+                            }
+                        });
+                })
+                .catch(() => {
+                    const message = 'Det gick inte att hämta ' +
+                        'klassrummen, vänligen försök igen!';
+                    const type = 'error';
 
-                                setTimeout(() => {
-                                    dispatch({
-                                        type: CLOSE_CONFIRMATION_MODAL
-                                    });
-                                }, confirmationModalTime);
-                            });
-                    }
+                    dispatch({
+                        type: FETCH_UID_FIREBASE_FAILED
+                    });
+
+                    dispatch({
+                        type: SHOW_CONFIRMATION_MODAL,
+                        message: message,
+                        confirmationModalType: type
+                    });
+
+                    setTimeout(() => {
+                        dispatch({
+                            type: CLOSE_CONFIRMATION_MODAL
+                        });
+                    }, confirmationModalTime);
                 });
         };
     },

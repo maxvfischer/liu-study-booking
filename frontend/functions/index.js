@@ -59,6 +59,40 @@ exports.removeOldBookings = functions.https.onRequest((req, res) => {
 // Returns status of all classrooms
 exports.getClassrooms = functions.https.onRequest((req, res) => {
     cors(req, res, () => {
+
+        // Get booking interval
+        let getInterval = function() {
+            return new Promise(function (resolve, reject) {
+                admin.database().ref('settings/bookingInterval').once('value', snapshotInterval => {
+                    resolve(snapshotInterval.val());
+                });
+            });
+        };
+
+        // Remove bookings older than booking interval
+        let removeBooking = function (interval) {
+            return new Promise(function (resolve, reject) {
+                const now = Date.now();
+                const cutoff = now - interval;
+
+                admin.database().ref('bookings').orderByKey().endAt(cutoff.toString()).once('value', snapshotBookings => {
+                    const bookings = snapshotBookings.val();
+                    for (let booking in bookings) {
+                        if (bookings.hasOwnProperty(booking)) {
+                            const seatNumber = bookings[booking]['seatNumber'];
+                            const classroom = bookings[booking]['classroom'];
+                            const UID = bookings[booking]['uid'];
+                            const startTime = booking;
+                            admin.database().ref(`bookedSeats/${classroom}/${seatNumber}`).remove();
+                            admin.database().ref(`students/${UID}`).remove();
+                            admin.database().ref(`bookings/${startTime}`).remove();
+                        }
+                    }
+                });
+                resolve("Sucess");
+            });
+        };
+
         // Return class room structure
         let getClassroomStructure = function() {
             return new Promise(function (resolve, reject) {
@@ -95,9 +129,22 @@ exports.getClassrooms = functions.https.onRequest((req, res) => {
             });
         };
 
-        getClassroomStructure()
+        // Get booking interval in settings
+        getInterval()
+            .then(interval => {
+                return(removeBooking(interval)); // Remove booking older than booking interval
+            })
+            .catch(error => {
+                return error;
+            })
+            .then(() => {
+                return(getClassroomStructure()); // Get classroom structure
+            })
+            .catch(error => {
+                return error;
+            })
             .then(classroomStructure => {
-                return(getClassroomStatus(classroomStructure));
+                return(getClassroomStatus(classroomStructure)); // Update structure with booked seats
             })
             .catch(error => {
                 return(error);

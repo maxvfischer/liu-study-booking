@@ -83,6 +83,10 @@ class Blipp extends Component {
             this.props.fetchTimeOut,
             UID
         );
+
+        this.setState({
+            value: ''
+        });
     }
 
     onSubmit(e) {
@@ -130,11 +134,13 @@ class Blipp extends Component {
                     <p style={{ fontSize: '40px', marginTop: '150px' }}>
                         Blippa ditt Liu-kort
                     </p>
-                    <form onSubmit={ this.onSubmit }>
+                    <form style={{height: 0, overflow: 'hidden'}} onSubmit={ this.onSubmit }>
                         <input
                             type={'text'}
                             value={ this.state.value }
-                            onChange={ this.onChange } />
+                            onChange={ this.onChange }
+                            autoFocus
+                        />
                     </form>
                 </Row>
             );
